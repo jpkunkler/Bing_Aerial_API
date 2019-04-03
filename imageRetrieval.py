@@ -23,7 +23,7 @@ BING_AVAILABILITY_URL = "http://dev.virtualearth.net/REST/V1/Imagery/Metadata/Ae
 
 class BingAerialImage(object):
     
-    def __init__(self, lat, lon, s=0.15):
+    def __init__(self, lat, lon, s=0.15, tgtFolder="./output"):
         self.lat = lat
         self.lon = lon
         self.arc = s
@@ -33,7 +33,7 @@ class BingAerialImage(object):
         
         self.currentBaseURL() # retrieve currently available domains for aerial images
           
-        self.tgtfolder = './output/'
+        self.tgtfolder = tgtFolder
         try:
             os.makedirs(self.tgtfolder)
         except FileExistsError:
@@ -187,17 +187,23 @@ def main():
         args = sys.argv[1:]
     except IndexError:
         sys.exit('(Latitude, Longitude) coordinates must be input')
-    if len(args) != 2:
-        sys.exit('Please only input a coordinate pair for your central point.')
+    if len(args) < 2:
+        sys.exit('Please input a coordinate pair for your central point in the format lat, lon.')
+    if len(args) > 3:
+        sys.exit('Please only enter a maximum of three arguments: lat, lon, output_path')
     
     try:
         lat, lon = float(args[0]), float(args[1])
     except ValueError:
         sys.exit('Latitude and longitude must be float type')
     
+    try:
+        output_path = str(args[2])
+    except:
+        output_path = "./output"
 
     # Retrieve the aerial image
-    img = BingAerialImage(lat, lon)
+    img = BingAerialImage(lat, lon, tgtFolder=output_path)
     if img.max_resolution_imagery_retrieval():
         print("Successfully retrieve the image with maximum resolution!")
     else:
