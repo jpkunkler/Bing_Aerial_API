@@ -1,2 +1,3 @@
 apikey.txt
 output/*.jpeg
+__pycache__/
